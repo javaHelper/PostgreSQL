@@ -1,3 +1,40 @@
+# Chapter-17: PostgreSQL Cross Join By Example
+
+```sql
+DROP TABLE IF EXISTS T1;
+CREATE TABLE T1 (label CHAR(1) PRIMARY KEY);
+
+DROP TABLE IF EXISTS T2;
+CREATE TABLE T2 (score INT PRIMARY KEY);
+
+INSERT INTO T1 (label)
+VALUES
+	('A'),
+	('B');
+
+INSERT INTO T2 (score)
+VALUES
+	(1),
+	(2),
+	(3);
+	
+SELECT *
+FROM T1
+CROSS JOIN T2;
+
+label|score|
+-----+-----+
+A    |    1|
+B    |    1|
+A    |    2|
+B    |    2|
+A    |    3|
+B    |    3|
+
+
+```
+
+------------
 
 # Chapter-16: PostgreSQL FULL OUTER JOIN
 
