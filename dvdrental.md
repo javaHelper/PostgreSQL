@@ -1,3 +1,153 @@
+# Chapter-11: PostgreSQL IS NULL
+
+```sql
+CREATE TABLE contacts(
+    id SERIAL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(15),
+    PRIMARY KEY (id)
+);
+
+INSERT INTO contacts(first_name, last_name, email, phone)
+VALUES ('John','Doe','john.doe@example.com',NULL),
+    ('Lily','Bush','lily.bush@example.com','(408-234-2764)');
+    
+    
+select id, first_name , last_name , email , phone 
+from contacts c 
+where phone = NULL;
+
+The statement returns no row. This is because the expression phone = NULL in the WHERE clause always returns false.
+
+select id, first_name , last_name , email , phone 
+from contacts c 
+where phone is NULL;
+
+id|first_name|last_name|email               |phone|
+--+----------+---------+--------------------+-----+
+ 1|John      |Doe      |john.doe@example.com|     |
+ 
+select id, first_name , last_name , email , phone 
+from contacts c 
+where phone is not NULL;
+
+id|first_name|last_name|email                |phone         |
+--+----------+---------+---------------------+--------------+
+ 2|Lily      |Bush     |lily.bush@example.com|(408-234-2764)|
+```
+
+
+---------
+# Chapter-10: PostgreSQL LIKE
+
+```sql
+select first_name , last_name 
+from customer c 
+where first_name like 'Jen%';
+
+first_name|last_name|
+----------+---------+
+Jennifer  |Davis    |
+Jennie    |Terry    |
+Jenny     |Castro   |
+
+select first_name , last_name 
+from customer c 
+where first_name like '%er%'
+order by first_name ;
+
+first_name |last_name  |
+-----------+-----------+
+Albert     |Crouse     |
+Alberto    |Henning    |
+Alexander  |Fennell    |
+Amber      |Dixon      |
+
+select first_name , last_name 
+from customer c 
+where first_name like '_her%'
+order by first_name ;
+
+first_name|last_name|
+----------+---------+
+Cheryl    |Murphy   |
+Sherri    |Rhodes   |
+Sherry    |Marshall |
+Theresa   |Watson   |
+
+select first_name , last_name 
+from customer c 
+where first_name not like 'Jen%'
+order by first_name ;
+
+first_name |last_name  |
+-----------+-----------+
+Aaron      |Selby      |
+Adam       |Gooch      |
+Adrian     |Clary      |
+Agnes      |Bishop     |
+Alan       |Kahn       |
+
+select first_name , last_name 
+from customer c 
+where first_name ilike 'BAR%'
+order by first_name ;
+
+first_name|last_name|
+----------+---------+
+Barbara   |Jones    |
+Barry     |Lovelace |
+
+
+```
+
+--------------
+# Chapter-9: PostgreSQL BETWEEN
+
+```sql
+select customer_id , payment_id , amount 
+from payment p 
+where amount between 8 and 9;
+
+customer_id|payment_id|amount|
+-----------+----------+------+
+        343|     17517|  8.99|
+        347|     17529|  8.99|
+        347|     17532|  8.99|
+        348|     17535|  8.99|
+        349|     17540|  8.99|
+        379|     17648|  8.99|
+	
+select customer_id , payment_id , amount 
+from payment p 
+where amount not between 8 and 9;
+
+customer_id|payment_id|amount|
+-----------+----------+------+
+        341|     17503|  7.99|
+        341|     17504|  1.99|
+        341|     17505|  7.99|
+        341|     17506|  2.99|
+        341|     17507|  7.99|
+	
+select customer_id , payment_id , amount 
+from payment p 
+where payment_date BETWEEN '2007-02-07' AND '2007-02-15';
+
+customer_id|payment_id|amount|
+-----------+----------+------+
+        368|     17610|  0.99|
+        370|     17617|  6.99|
+        402|     17743|  4.99|
+        416|     17793|  2.99|
+        432|     17854|  5.99|
+	
+	
+```
+
+-------------
 # Chapter-8:  PostgreSQL IN
 
 ```sql
