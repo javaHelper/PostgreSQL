@@ -1,3 +1,332 @@
+# Chapter024: PostgreSQL GROUPING SETS
+
+```sql
+DROP TABLE IF EXISTS sales;
+CREATE TABLE sales (
+    brand VARCHAR NOT NULL,
+    segment VARCHAR NOT NULL,
+    quantity INT NOT NULL,
+    PRIMARY KEY (brand, segment)
+);
+
+INSERT INTO sales (brand, segment, quantity)
+VALUES
+    ('ABC', 'Premium', 100),
+    ('ABC', 'Basic', 200),
+    ('XYZ', 'Premium', 100),
+    ('XYZ', 'Basic', 300);
+
+
+SELECT
+    brand,
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    brand,
+    segment;
+    
+brand|segment|sum|
+-----+-------+---+
+XYZ  |Basic  |300|
+ABC  |Premium|100|
+ABC  |Basic  |200|
+XYZ  |Premium|100|
+
+SELECT
+    brand,
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    brand,
+    segment;
+    
+brand|segment|sum|
+-----+-------+---+
+XYZ  |Basic  |300|
+ABC  |Premium|100|
+ABC  |Basic  |200|
+XYZ  |Premium|100|
+
+SELECT
+    brand,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    brand;
+    
+brand|sum|
+-----+---+
+ABC  |300|
+XYZ  |400|
+
+SELECT
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    segment;
+
+segment|sum|
+-------+---+
+Basic  |500|
+Premium|200|
+
+
+SELECT
+    brand,
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    brand,
+    segment
+
+UNION ALL
+
+SELECT
+    brand,
+    NULL,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    brand
+
+UNION ALL
+
+SELECT
+    NULL,
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    segment
+
+UNION ALL
+
+SELECT
+    NULL,
+    NULL,
+    SUM (quantity)
+FROM
+    sales;
+
+
+brand|segment|sum|
+-----+-------+---+
+XYZ  |Basic  |300|
+ABC  |Premium|100|
+ABC  |Basic  |200|
+XYZ  |Premium|100|
+ABC  |       |300|
+XYZ  |       |400|
+     |Basic  |500|
+     |Premium|200|
+     |       |700|
+     
+  
+SELECT
+    brand,
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    GROUPING SETS (
+        (brand, segment),
+        (brand),
+        (segment),
+        ()
+    );
+brand|segment|sum|
+-----+-------+---+
+     |       |700|
+XYZ  |Basic  |300|
+ABC  |Premium|100|
+ABC  |Basic  |200|
+XYZ  |Premium|100|
+ABC  |       |300|
+XYZ  |       |400|
+     |Basic  |500|
+     |Premium|200|
+     
+     
+SELECT
+	GROUPING(brand) grouping_brand,
+	GROUPING(segment) grouping_segment,
+	brand,
+	segment,
+	SUM (quantity)
+FROM
+	sales
+GROUP BY
+	GROUPING SETS (
+		(brand),
+		(segment),
+		()
+	)
+ORDER BY
+	brand,
+	segment;
+
+grouping_brand|grouping_segment|brand|segment|sum|
+--------------+----------------+-----+-------+---+
+             0|               1|ABC  |       |300|
+             0|               1|XYZ  |       |400|
+             1|               0|     |Basic  |500|
+             1|               0|     |Premium|200|
+             1|               1|     |       |700|
+	     
+	   
+SELECT
+	GROUPING(brand) grouping_brand,
+	GROUPING(segment) grouping_segment,
+	brand,
+	segment,
+	SUM (quantity)
+FROM
+	sales
+GROUP BY
+	GROUPING SETS (
+		(brand),
+		(segment),
+		()
+	)
+HAVING GROUPING(brand) = 0	
+ORDER BY
+	brand,
+	segment;
+
+grouping_brand|grouping_segment|brand|segment|sum|
+--------------+----------------+-----+-------+---+
+             0|               1|ABC  |       |300|
+             0|               1|XYZ  |       |400|
+```
+
+=------------------
+# Chapter-23: PostgreSQL EXCEPT
+
+```sql
+SELECT * FROM top_rated_films
+EXCEPT 
+SELECT * FROM most_popular_films;
+
+title                   |release_year|
+------------------------+------------+
+The Shawshank Redemption|        1994|
+12 Angry Men            |        1957|
+
+
+SELECT * FROM top_rated_films
+EXCEPT 
+SELECT * FROM most_popular_films
+ORDER BY title;
+
+title                   |release_year|
+------------------------+------------+
+12 Angry Men            |        1957|
+The Shawshank Redemption|        1994|
+```
+
+---------
+# Chapter-22: PostgreSQL INTERSECT Operator
+
+```sql
+SELECT *
+FROM most_popular_films 
+INTERSECT
+SELECT *
+FROM top_rated_films;
+
+title        |release_year|
+-------------+------------+
+The Godfather|        1972|
+
+
+```
+
+--------------
+# Chapter-21: PostgreSQL UNION
+
+```sql
+
+DROP TABLE IF EXISTS top_rated_films;
+CREATE TABLE top_rated_films(
+	title VARCHAR NOT NULL,
+	release_year SMALLINT
+);
+
+DROP TABLE IF EXISTS most_popular_films;
+CREATE TABLE most_popular_films(
+	title VARCHAR NOT NULL,
+	release_year SMALLINT
+);
+
+INSERT INTO 
+   top_rated_films(title,release_year)
+VALUES
+   ('The Shawshank Redemption',1994),
+   ('The Godfather',1972),
+   ('12 Angry Men',1957);
+
+INSERT INTO 
+   most_popular_films(title,release_year)
+VALUES
+   ('An American Pickle',2020),
+   ('The Godfather',1972),
+   ('Greyhound',2020);
+   
+SELECT * FROM top_rated_films
+UNION
+SELECT * FROM most_popular_films;
+
+title                   |release_year|
+------------------------+------------+
+An American Pickle      |        2020|
+Greyhound               |        2020|
+The Shawshank Redemption|        1994|
+The Godfather           |        1972|
+12 Angry Men            |        1957|
+
+SELECT * FROM top_rated_films
+UNION ALL
+SELECT * FROM most_popular_films;
+
+title                   |release_year|
+------------------------+------------+
+The Shawshank Redemption|        1994|
+The Godfather           |        1972|
+12 Angry Men            |        1957|
+An American Pickle      |        2020|
+The Godfather           |        1972|
+Greyhound               |        2020|
+
+SELECT * FROM top_rated_films
+UNION ALL
+SELECT * FROM most_popular_films
+ORDER BY title;
+
+title                   |release_year|
+------------------------+------------+
+12 Angry Men            |        1957|
+An American Pickle      |        2020|
+Greyhound               |        2020|
+The Godfather           |        1972|
+The Godfather           |        1972|
+The Shawshank Redemption|        1994|
+
+
+```
+
+---------
 # Chapter-20: PostgreSQL HAVING
 
 ```sql
