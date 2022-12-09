@@ -1,3 +1,261 @@
+# Chapter-27: query
+
+```sql
+SELECT
+	AVG (rental_rate)
+FROM
+	film;
+	
+avg               |
+------------------+
+2.9800000000000000|
+
+SELECT
+	film_id,
+	title,
+	rental_rate
+FROM
+	film
+WHERE
+	rental_rate > 2.98;
+	
+film_id|title                      |rental_rate|
+-------+---------------------------+-----------+
+    133|Chamber Italian            |       4.99|
+    384|Grosse Wonderful           |       4.99|
+      8|Airport Pollock            |       4.99|
+     98|Bright Encounters          |       4.99|
+      2|Ace Goldfinger             |       4.99|
+      3|Adaptation Holes           |       2.99|
+      
+SELECT
+	film_id,
+	title,
+	rental_rate
+FROM
+	film
+WHERE
+	rental_rate > (
+		SELECT
+			AVG (rental_rate)
+		FROM
+			film
+	);
+	
+SELECT
+	inventory.film_id
+FROM
+	rental
+INNER JOIN inventory ON inventory.inventory_id = rental.inventory_id
+WHERE
+	return_date BETWEEN '2005-05-29'
+AND '2005-05-30';
+
+
+SELECT
+	film_id,
+	title
+FROM
+	film
+WHERE
+	film_id IN (
+		SELECT
+			inventory.film_id
+		FROM
+			rental
+		INNER JOIN inventory ON inventory.inventory_id = rental.inventory_id
+		WHERE
+			return_date BETWEEN '2005-05-29'
+		AND '2005-05-30'
+	);
+	
+
+SELECT
+	first_name,
+	last_name
+FROM
+	customer
+WHERE
+	EXISTS (
+		SELECT
+			1
+		FROM
+			payment
+		WHERE
+			payment.customer_id = customer.customer_id
+	);
+```
+
+------------------
+# Chapter-26: PostgreSQL CUBE
+
+```
+SELECT
+    brand,
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    CUBE (brand, segment)
+ORDER BY
+    brand,
+    segment;
+
+brand|segment|sum|
+-----+-------+---+
+ABC  |Basic  |200|
+ABC  |Premium|100|
+ABC  |       |300|
+XYZ  |Basic  |300|
+XYZ  |Premium|100|
+XYZ  |       |400|
+     |Basic  |500|
+     |Premium|200|
+     |       |700|
+     
+SELECT
+    brand,
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    brand,
+    CUBE (segment)
+ORDER BY
+    brand,
+    segment;
+
+brand|segment|sum|
+-----+-------+---+
+ABC  |Basic  |200|
+ABC  |Premium|100|
+ABC  |       |300|
+XYZ  |Basic  |300|
+XYZ  |Premium|100|
+XYZ  |       |400|
+```
+
+----------
+# Chapter-25: PostgreSQL ROLLUP
+
+```sql
+DROP TABLE IF EXISTS sales;
+CREATE TABLE sales (
+    brand VARCHAR NOT NULL,
+    segment VARCHAR NOT NULL,
+    quantity INT NOT NULL,
+    PRIMARY KEY (brand, segment)
+);
+
+INSERT INTO sales (brand, segment, quantity)
+VALUES
+    ('ABC', 'Premium', 100),
+    ('ABC', 'Basic', 200),
+    ('XYZ', 'Premium', 100),
+    ('XYZ', 'Basic', 300);
+
+SELECT
+    brand,
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    ROLLUP (brand, segment)
+ORDER BY
+    brand,
+    segment;
+
+brand|segment|sum|
+-----+-------+---+
+ABC  |Basic  |200|
+ABC  |Premium|100|
+ABC  |       |300|
+XYZ  |Basic  |300|
+XYZ  |Premium|100|
+XYZ  |       |400|
+     |       |700|
+     
+SELECT
+    segment,
+    brand,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    ROLLUP (segment, brand)
+ORDER BY
+    segment,
+    brand;
+
+segment|brand|sum|
+-------+-----+---+
+Basic  |ABC  |200|
+Basic  |XYZ  |300|
+Basic  |     |500|
+Premium|ABC  |100|
+Premium|XYZ  |100|
+Premium|     |200|
+       |     |700|
+       
+SELECT
+    segment,
+    brand,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    segment,
+    ROLLUP (brand)
+ORDER BY
+    segment,
+    brand;
+
+segment|brand|sum|
+-------+-----+---+
+Basic  |ABC  |200|
+Basic  |XYZ  |300|
+Basic  |     |500|
+Premium|ABC  |100|
+Premium|XYZ  |100|
+Premium|     |200|
+
+
+SELECT
+    EXTRACT (YEAR FROM rental_date) y,
+    EXTRACT (MONTH FROM rental_date) M,
+    EXTRACT (DAY FROM rental_date) d,
+    COUNT (rental_id)
+FROM
+    rental
+GROUP BY
+    ROLLUP (
+        EXTRACT (YEAR FROM rental_date),
+        EXTRACT (MONTH FROM rental_date),
+        EXTRACT (DAY FROM rental_date)
+    );
+
+
+y     |m  |d   |count|
+------+---+----+-----+
+      |   |    |16044|
+2005.0|6.0|15.0|  348|
+2005.0|6.0|20.0|  331|
+2005.0|7.0|11.0|  461|
+2005.0|7.0| 5.0|   27|
+2005.0|5.0|24.0|    8|
+2005.0|7.0|29.0|  641|
+2005.0|8.0|23.0|  598|
+2005.0|7.0| 6.0|  504|
+2005.0|8.0| 1.0|  671|
+2005.0|7.0|27.0|  649|
+2006.0|2.0|14.0|  182|
+2005.0|6.0|21.0|  275|
+```
+
+--------
 # Chapter024: PostgreSQL GROUPING SETS
 
 ```sql
