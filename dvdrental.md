@@ -1,3 +1,127 @@
+# Chapter-8:  PostgreSQL IN
+
+```sql
+SELECT customer_id,
+	rental_id,
+	return_date
+FROM
+	rental
+WHERE
+	customer_id IN (1, 2)
+ORDER BY
+	return_date DESC;
+	
+customer_id|rental_id|return_date        |
+-----------+---------+-------------------+
+          2|    15145|2005-08-31 15:51:04|
+          1|    15315|2005-08-30 01:51:46|
+          2|    14743|2005-08-29 00:18:56|
+          1|    15298|2005-08-28 22:49:37|
+          2|    14475|2005-08-27 08:59:32|
+          1|    14825|2005-08-27 07:01:57|
+          2|    15907|2005-08-25 23:23:35|
+	  
+SELECT
+	rental_id,
+	customer_id,
+	return_date
+FROM
+	rental
+WHERE
+	customer_id = 1 OR customer_id = 2
+ORDER BY
+	return_date DESC;
+	
+rental_id|customer_id|return_date        |
+---------+-----------+-------------------+
+    15145|          2|2005-08-31 15:51:04|
+    15315|          1|2005-08-30 01:51:46|
+    14743|          2|2005-08-29 00:18:56|
+    15298|          1|2005-08-28 22:49:37|
+    14475|          2|2005-08-27 08:59:32|
+    14825|          1|2005-08-27 07:01:57|
+    15907|          2|2005-08-25 23:23:35|
+    12963|          2|2005-08-23 11:37:04|
+    
+SELECT
+	customer_id,
+	rental_id,
+	return_date
+FROM
+	rental
+WHERE
+	customer_id NOT IN (1, 2);
+	
+customer_id|rental_id|return_date        |
+-----------+---------+-------------------+
+        459|        2|2005-05-28 19:40:33|
+        408|        3|2005-06-01 22:12:39|
+        333|        4|2005-06-03 01:43:41|
+        222|        5|2005-06-02 04:33:21|
+        549|        6|2005-05-27 01:32:07|
+        269|        7|2005-05-29 20:34:53|
+        239|        8|2005-05-27 23:33:46|
+        126|        9|2005-05-28 00:22:40|	
+
+SELECT
+	customer_id,
+	rental_id,
+	return_date
+FROM
+	rental
+WHERE
+	customer_id <> 1
+AND customer_id <> 2;
+
+
+SELECT customer_id
+FROM rental
+WHERE CAST (return_date AS DATE) = '2005-05-27'
+ORDER BY customer_id;
+
+customer_id|
+-----------+
+         37|
+         47|
+         48|
+         65|
+         73|
+         75|
+         93|
+        114|
+        119|
+        131|
+        158|
+	
+SELECT
+	customer_id,
+	first_name,
+	last_name
+FROM
+	customer
+WHERE
+	customer_id IN (
+		SELECT customer_id
+		FROM rental
+		WHERE CAST (return_date AS DATE) = '2005-05-27'
+	)
+ORDER BY customer_id;
+
+customer_id|first_name|last_name  |
+-----------+----------+-----------+
+         37|Pamela    |Baker      |
+         47|Frances   |Parker     |
+         48|Ann       |Evans      |
+         65|Rose      |Howard     |
+         73|Beverly   |Brooks     |
+         75|Tammy     |Sanders    |
+         93|Phyllis   |Foster     |
+        114|Grace     |Ellis      |
+        119|Sherry    |Marshall   |
+        131|Monica    |Hicks      |
+```
+
+--------------
 # Chapter-7: PostgreSQL FETCH
 
 ```sql
