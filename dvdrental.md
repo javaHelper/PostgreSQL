@@ -1,3 +1,154 @@
+# Chapter-5: PostgreSQL WHERE
+
+```sql
+select last_name , first_name  
+from customer c 
+where first_name ='Jamie';
+
+last_name|first_name|
+---------+----------+
+Rice     |Jamie     |
+Waugh    |Jamie     |
+
+select last_name , first_name  
+from customer c 
+where first_name ='Jamie' and last_name ='Rice';
+
+last_name|first_name|
+---------+----------+
+Rice     |Jamie     |
+
+select last_name , first_name  
+from customer c 
+where first_name ='Rodriguez' or last_name ='Adam';
+
+last_name|first_name|
+---------+----------+
+Adam     |Nathaniel |
+
+
+select first_name, last_name
+from customer
+WHERE first_name IN ('Ann','Anne','Annie');
+
+first_name|last_name|
+----------+---------+
+Ann       |Evans    |
+Anne      |Powell   |
+Annie     |Russell  |
+
+
+select first_name, last_name
+from customer
+WHERE first_name like 'Ann%';
+
+first_name|last_name|
+----------+---------+
+Anna      |Hill     |
+Ann       |Evans    |
+Anne      |Powell   |
+Annie     |Russell  |
+Annette   |Olson    |
+
+
+select first_name, length(last_name) name_length
+from customer
+WHERE first_name like 'A%'
+and length(last_name) between 3 and 5
+order by name_length;
+
+first_name|name_length|
+----------+-----------+
+Audrey    |          3|
+Alan      |          4|
+Antonio   |          4|
+Andre     |          4|
+Anna      |          4|
+Annette   |          5|
+Andrew    |          5|
+Adam      |          5|
+Aaron     |          5|
+Amy       |          5|
+Adrian    |          5|
+Ann       |          5|
+Amber     |          5|
+April     |          5|
+Alicia    |          5|
+
+
+select first_name, last_name , length(last_name) name_length
+from customer
+WHERE first_name like 'Bra%'
+and last_name <> 'Motley';
+
+first_name|last_name|name_length|
+----------+---------+-----------+
+Brandy    |Graves   |          6|
+Brandon   |Huey     |          4|
+Brad      |Mccurdy  |          7|
+
+```
+
+
+------------------------------
+# Chapter-4: PostgreSQL SELECT DISTINCT
+
+```sql
+CREATE TABLE distinct_demo (
+	id serial NOT NULL PRIMARY KEY,
+	bcolor VARCHAR,
+	fcolor VARCHAR
+);
+
+INSERT INTO distinct_demo (bcolor, fcolor)
+VALUES
+	('red', 'red'),
+	('red', 'red'),
+	('red', NULL),
+	(NULL, 'red'),
+	('red', 'green'),
+	('red', 'blue'),
+	('green', 'red'),
+	('green', 'blue'),
+	('green', 'green'),
+	('blue', 'red'),
+	('blue', 'green'),
+	('blue', 'blue');
+	
+select distinct (bcolor)
+from distinct_demo 
+order by bcolor ;
+
+select distinct (bcolor), fcolor 
+from distinct_demo 
+order by bcolor, fcolor  ;
+
+bcolor|fcolor|
+------+------+
+blue  |blue  |
+blue  |green |
+blue  |red   |
+green |blue  |
+green |green |
+green |red   |
+red   |blue  |
+red   |green |
+red   |red   |
+red   |      |
+      |red   |
+      
+      
+select DISTINCT ON (bcolor) bcolor, fcolor
+from distinct_demo 
+ORDER by bcolor, fcolor;
+
+bcolor|fcolor|
+------+------+
+blue  |blue  |
+green |blue  |
+red   |blue  |
+      |red   |
+```
 
 
 # Chapter-3 - PostgreSQL ORDER BY
