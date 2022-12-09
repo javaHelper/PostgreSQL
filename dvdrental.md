@@ -1,3 +1,126 @@
+# Chapter-7: PostgreSQL FETCH
+
+```sql
+SELECT
+    film_id,
+    title
+FROM
+    film
+ORDER BY
+    title 
+FETCH FIRST ROW ONLY;
+
+film_id|title           |
+-------+----------------+
+      1|Academy Dinosaur|
+      
+      
+SELECT
+    film_id,
+    title
+FROM
+    film
+ORDER BY
+    title 
+FETCH FIRST 1 ROW ONLY;
+
+film_id|title           |
+-------+----------------+
+      1|Academy Dinosaur|
+      
+SELECT
+    film_id,
+    title
+FROM
+    film
+ORDER BY
+    title 
+FETCH FIRST 5 ROW ONLY;
+
+film_id|title           |
+-------+----------------+
+      1|Academy Dinosaur|
+      2|Ace Goldfinger  |
+      3|Adaptation Holes|
+      4|Affair Prejudice|
+      5|African Egg     |
+      
+SELECT
+    film_id,
+    title
+FROM
+    film
+ORDER BY
+    title 
+OFFSET 5 ROWS 
+FETCH FIRST 5 ROW ONLY; 
+
+film_id|title           |
+-------+----------------+
+      6|Agent Truman    |
+      7|Airplane Sierra |
+      8|Airport Pollock |
+      9|Alabama Devil   |
+     10|Aladdin Calendar|
+```
+
+
+----------------------
+# Chapter-6: PostgreSQL LIMIT
+
+```sql
+select film_id, title,release_year
+from film
+ORDER by film_id
+LIMIT 5;
+
+film_id|title           |release_year|
+-------+----------------+------------+
+      1|Academy Dinosaur|        2006|
+      2|Ace Goldfinger  |        2006|
+      3|Adaptation Holes|        2006|
+      4|Affair Prejudice|        2006|
+      5|African Egg     |        2006|
+      
+To retrieve 4 films starting from the fourth one ordered by film_id, you use both LIMIT and OFFSET clauses as follows:
+
+select film_id, title, release_year
+from film
+ORDER by film_id
+LIMIT 4 OFFSET 3;
+
+film_id|title           |release_year|
+-------+----------------+------------+
+      4|Affair Prejudice|        2006|
+      5|African Egg     |        2006|
+      6|Agent Truman    |        2006|
+      7|Airplane Sierra |        2006|
+      
+select
+	film_id,
+	title,
+	rental_rate
+from
+	film
+order by
+	rental_rate desc
+limit 10;
+
+film_id|title              |rental_rate|
+-------+-------------------+-----------+
+     13|Ali Forever        |       4.99|
+     20|Amelie Hellfighters|       4.99|
+      7|Airplane Sierra    |       4.99|
+     10|Aladdin Calendar   |       4.99|
+      2|Ace Goldfinger     |       4.99|
+      8|Airport Pollock    |       4.99|
+     98|Bright Encounters  |       4.99|
+    133|Chamber Italian    |       4.99|
+    384|Grosse Wonderful   |       4.99|
+     21|American Circus    |       4.99|
+
+```
+
 # Chapter-5: PostgreSQL WHERE
 
 ```sql
