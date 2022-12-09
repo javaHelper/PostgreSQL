@@ -1,3 +1,93 @@
+# Chapter-13: Inner Join
+
+```sql
+select c.customer_id , c.first_name , c.last_name , p.amount , p.payment_date 
+from customer c 
+inner join payment p 
+	on p.customer_id = c.customer_id 
+order by p.payment_date 
+	
+customer_id|first_name|last_name  |amount|payment_date       |
+-----------+----------+-----------+------+-------------------+
+        416|Jeffery   |Pinson     |  2.99|2007-02-14 21:21:59|
+        516|Elmer     |Noe        |  4.99|2007-02-14 21:23:39|
+        239|Minnie    |Romero     |  4.99|2007-02-14 21:29:00|
+        592|Terrance  |Roush      |  6.99|2007-02-14 21:41:12|
+         49|Joyce     |Edwards    |  0.99|2007-02-14 21:44:52|
+        264|Gwendolyn |May        |  3.99|2007-02-14 21:44:53|
+         46|Catherine |Campbell   |  4.99|2007-02-14 21:45:29|
+        481|Herman    |Devore     |  2.99|2007-02-14 22:03:35|
+        139|Amber     |Dixon      |  2.99|2007-02-14 22:11:22|
+	
+select c.customer_id , c.first_name , c.last_name , p.amount , p.payment_date 
+from customer c 
+inner join payment p 
+	on p.customer_id = c.customer_id 
+where c.customer_id = 2;
+
+customer_id|first_name|last_name|amount|payment_date       |
+-----------+----------+---------+------+-------------------+
+          2|Patricia  |Johnson  |  2.99|2007-02-17 19:23:24|
+          2|Patricia  |Johnson  |  0.99|2007-03-01 08:13:52|
+          2|Patricia  |Johnson  |  0.99|2007-03-02 00:39:22|
+          2|Patricia  |Johnson  |  5.99|2007-03-02 06:10:07|
+          2|Patricia  |Johnson  |  6.99|2007-03-02 09:12:14|
+          2|Patricia  |Johnson  |  2.99|2007-03-02 12:13:19|
+          2|Patricia  |Johnson  |  2.99|2007-03-17 02:20:44|
+          2|Patricia  |Johnson  |  2.99|2007-03-19 04:54:30|
+          2|Patricia  |Johnson  |  4.99|2007-03-21 11:52:58|
+	  
+	  
+SELECT
+	customer_id,
+	first_name,
+	last_name,
+	amount,
+	payment_date
+FROM
+	customer
+INNER JOIN payment USING(customer_id)
+ORDER BY payment_date;
+
+customer_id|first_name|last_name  |amount|payment_date       |
+-----------+----------+-----------+------+-------------------+
+        416|Jeffery   |Pinson     |  2.99|2007-02-14 21:21:59|
+        516|Elmer     |Noe        |  4.99|2007-02-14 21:23:39|
+        239|Minnie    |Romero     |  4.99|2007-02-14 21:29:00|
+        592|Terrance  |Roush      |  6.99|2007-02-14 21:41:12|
+         49|Joyce     |Edwards    |  0.99|2007-02-14 21:44:52|
+        264|Gwendolyn |May        |  3.99|2007-02-14 21:44:53|
+	
+select c.customer_id,
+	c.first_name customer_first_name,
+	c.last_name customer_last_name,
+	s.first_name staff_first_name,
+	s.last_name staff_last_name,
+	amount,
+	payment_date 
+from customer c 
+inner join payment p 
+on p.customer_id = c.customer_id 
+inner join staff s 
+on p.staff_id = s.staff_id 
+order by p.payment_date 
+
+customer_id|customer_first_name|customer_last_name|staff_first_name|staff_last_name|amount|payment_date       |
+-----------+-------------------+------------------+----------------+---------------+------+-------------------+
+        416|Jeffery            |Pinson            |Jon             |Stephens       |  2.99|2007-02-14 21:21:59|
+        516|Elmer              |Noe               |Jon             |Stephens       |  4.99|2007-02-14 21:23:39|
+        239|Minnie             |Romero            |Mike            |Hillyer        |  4.99|2007-02-14 21:29:00|
+        592|Terrance           |Roush             |Jon             |Stephens       |  6.99|2007-02-14 21:41:12|
+         49|Joyce              |Edwards           |Mike            |Hillyer        |  0.99|2007-02-14 21:44:52|
+        264|Gwendolyn          |May               |Jon             |Stephens       |  3.99|2007-02-14 21:44:53|
+         46|Catherine          |Campbell          |Mike            |Hillyer        |  4.99|2007-02-14 21:45:29|
+        481|Herman             |Devore            |Jon             |Stephens       |  2.99|2007-02-14 22:03:35|
+        139|Amber              |Dixon             |Jon             |Stephens       |  2.99|2007-02-14 22:11:22|
+
+```
+
+
+-------------
 # Chapter-12: PostgreSQL Joins
 
 ```sql
