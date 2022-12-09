@@ -87,7 +87,40 @@ a|fruit_a|b|fruit_b   |
 -+-------+-+----------+
  |       |3|Watermelon|
  |       |4|Pear      |
+ 
+ 
+ select ba.a , ba.fruit_a , bb.b , bb.fruit_b 
+from basket_a ba 
+full outer join basket_b bb 
+on ba.fruit_a = bb.fruit_b ;
+
+a|fruit_a |b|fruit_b   |
+-+--------+-+----------+
+1|Apple   |2|Apple     |
+2|Orange  |1|Orange    |
+3|Banana  | |          |
+4|Cucumber| |          |
+ |        |3|Watermelon|
+ |        |4|Pear      |
+ 
+ 
+ 
+select ba.a , ba.fruit_a , bb.b , bb.fruit_b 
+from basket_a ba 
+full outer join basket_b bb 
+on ba.fruit_a = bb.fruit_b 
+where a is null or b is null ;
+
+a|fruit_a |b|fruit_b   |
+-+--------+-+----------+
+3|Banana  | |          |
+4|Cucumber| |          |
+ |        |3|Watermelon|
+ |        |4|Pear      |
 ```
+
+![image](https://user-images.githubusercontent.com/54174687/206704704-a0f05e15-6d33-447e-bfc5-4354d4c85d81.png)
+
 
 -----------
 # Chapter-11: PostgreSQL IS NULL
