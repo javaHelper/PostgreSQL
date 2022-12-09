@@ -1,6 +1,212 @@
+# Chapter-20: PostgreSQL HAVING
+
+```sql
+SELECT
+	customer_id,
+	SUM (amount)
+FROM
+	payment
+GROUP BY
+	customer_id
+HAVING
+	SUM (amount) > 200;
+	
+customer_id|sum   |
+-----------+------+
+        526|208.58|
+        148|211.55|
+	
+SELECT
+	store_id,
+	COUNT (customer_id)
+FROM
+	customer
+GROUP BY
+	store_id
+	
+store_id|count|
+--------+-----+
+       1|  326|
+       2|  273|
+       
+SELECT
+	store_id,
+	COUNT (customer_id)
+FROM
+	customer
+GROUP BY
+	store_id
+HAVING
+	COUNT (customer_id) > 300;
+	
+store_id|count|
+--------+-----+
+       1|  326|	
+```
+
+-----------
+# Chapter-19: PostgreSQL GROUP BY
+
+```sql
+SELECT
+   customer_id
+FROM
+   payment
+GROUP BY
+   customer_id;
+   
+customer_id|
+-----------+
+        184|
+         87|
+        477|
+        273|
+        550|
+         51|
+        394|
+	
+SELECT
+	customer_id,
+	SUM (amount)
+FROM
+	payment
+GROUP BY
+	customer_id;
+	
+customer_id|sum   |
+-----------+------+
+        184| 80.80|
+         87|137.72|
+        477|106.79|
+        273|130.72|
+        550|151.69|
+         51|123.70|
+        394| 77.80|
+        272| 65.87|
+	
+SELECT
+	customer_id,
+	SUM (amount)
+FROM
+	payment
+GROUP BY
+	customer_id
+ORDER BY
+	SUM (amount) DESC;
+
+customer_id|sum   |
+-----------+------+
+        148|211.55|
+        526|208.58|
+        178|194.61|
+        137|191.62|
+        144|189.60|
+        459|183.63|
+        181|167.67|
+        410|167.62|
+	
+
+SELECT
+	first_name || ' ' || last_name full_name,
+	SUM (amount) amount
+FROM
+	payment
+INNER JOIN customer USING (customer_id)    	
+GROUP BY
+	full_name
+ORDER BY amount DESC;	
+
+full_name            |amount|
+---------------------+------+
+Eleanor Hunt         |211.55|
+Karl Seal            |208.58|
+Marion Snyder        |194.61|
+Rhonda Kennedy       |191.62|
+Clara Shaw           |189.60|
+Tommy Collazo        |183.63|
+Ana Bradley          |167.67|
+Curtis Irby          |167.62|
+Marcia Dean          |166.61|
+
+
+SELECT
+	staff_id,
+	COUNT (payment_id)
+FROM
+	payment
+GROUP BY
+	staff_id;
+
+staff_id|count|
+--------+-----+
+       1| 7292|
+       2| 7304|
+       
+SELECT 
+	customer_id, 
+	staff_id, 
+	SUM(amount) 
+FROM 
+	payment
+GROUP BY 
+	staff_id, 
+	customer_id
+ORDER BY 
+    customer_id;
+    
+customer_id|staff_id|sum   |
+-----------+--------+------+
+          1|       2| 53.85|
+          1|       1| 60.85|
+          2|       2| 67.88|
+          2|       1| 55.86|
+          3|       1| 59.88|
+          3|       2| 70.88|
+          4|       2| 31.90|
+          4|       1| 49.88|
+          5|       1| 63.86|
+          5|       2| 70.79|
+	  
+SELECT 
+	DATE(payment_date) paid_date, 
+	SUM(amount) sum
+FROM 
+	payment
+GROUP BY
+	DATE(payment_date);
+	
+paid_date |sum    |
+----------+-------+
+2007-02-14| 116.73|
+2007-02-19|1290.90|
+2007-02-20|1219.09|
+2007-03-19|2617.69|
+2007-04-26| 347.21|
+2007-04-08|2227.84|
+2007-02-15|1188.92|
+2007-04-28|2622.73|
+2007-03-17|2442.16|
+2007-03-20|2669.89|	
+```
+
+---------------
+
 # Chapter-18: PostgreSQL NATURAL JOIN Explained By Examples
 
-```
+paid_date |sum    |
+----------+-------+
+2007-02-14| 116.73|
+2007-02-19|1290.90|
+2007-02-20|1219.09|
+2007-03-19|2617.69|
+2007-04-26| 347.21|
+2007-04-08|2227.84|
+2007-02-15|1188.92|
+2007-04-28|2622.73|
+2007-03-17|2442.16|
+2007-03-20|2669.89|
+
+```sql
 DROP TABLE IF EXISTS categories;
 CREATE TABLE categories (
 	category_id serial PRIMARY KEY,
