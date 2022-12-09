@@ -1,3 +1,78 @@
+# Chapter-14: Left Join
+
+```sql
+select f.film_id , f.title , i.inventory_id 
+from film f 
+left join inventory i 
+on i.film_id = f.film_id 
+order by f.title ;
+
+film_id|title                      |inventory_id|
+-------+---------------------------+------------+
+      1|Academy Dinosaur           |           6|
+      1|Academy Dinosaur           |           1|
+      1|Academy Dinosaur           |           4|
+      1|Academy Dinosaur           |           7|
+      1|Academy Dinosaur           |           3|
+      1|Academy Dinosaur           |           5|
+      1|Academy Dinosaur           |           8|
+      1|Academy Dinosaur           |           2|
+      2|Ace Goldfinger             |           9|
+      2|Ace Goldfinger             |          10|
+      2|Ace Goldfinger             |          11|
+      3|Adaptation Holes           |          12|
+      3|Adaptation Holes           |          13|
+      3|Adaptation Holes           |          14|
+      
+      
+select f.film_id , f.title , i.inventory_id 
+from film f 
+left join inventory i 
+on i.film_id = f.film_id 
+where i.film_id is null
+order by f.title ;
+
+film_id|title                 |inventory_id|
+-------+----------------------+------------+
+     14|Alice Fantasia        |            |
+     33|Apollo Teen           |            |
+     36|Argonauts Town        |            |
+     38|Ark Ridgemont         |            |
+     41|Arsenic Independence  |            |
+     87|Boondock Ballroom     |            |
+    108|Butch Panther         |            |
+    128|Catch Amistad         |            |
+    144|Chinatown Gladiator   |            |
+    148|Chocolate Duck        |            |
+    171|Commandments Express  |            |
+    192|Crossing Divorce      |            |
+    
+SELECT
+	f.film_id,
+	title,
+	inventory_id
+FROM
+	film f
+LEFT JOIN inventory i USING (film_id)
+WHERE i.film_id IS NULL
+ORDER BY title;
+
+film_id|title                 |inventory_id|
+-------+----------------------+------------+
+     14|Alice Fantasia        |            |
+     33|Apollo Teen           |            |
+     36|Argonauts Town        |            |
+     38|Ark Ridgemont         |            |
+     41|Arsenic Independence  |            |
+     87|Boondock Ballroom     |            |
+    108|Butch Panther         |            |
+    128|Catch Amistad         |            |
+    144|Chinatown Gladiator   |            |
+    148|Chocolate Duck        |            |
+    171|Commandments Express  |            |
+    192|Crossing Divorce      |            |
+```
+
 # Chapter-13: Inner Join
 
 ```sql
